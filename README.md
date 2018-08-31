@@ -1,9 +1,13 @@
 
-api_jwt
+## API_JWT
 
 ## Purpose
 
-This a small API written in golang that implements JSON Web Token through several external libraries.
+This is a small API written in golang that implements JSON Web Token through several external libraries.
+
+- https://github.com/go-chi/chi
+- https://github.com/go-chi/jwtauth
+- https://github.com/mattn/go-sqlite3
 
 
 ## Usage
@@ -24,17 +28,17 @@ Finally you can run the server doing:
 $ go run api_jwt.go
 ```
 
-For testing from a client you could first try to access the root of the api:
+For testing purpose, you can try to access the API root first:
 
 ```
 $ curl -v http://localhost:3001/
 ```
-For accessing the restricted endpoint /admin you need to authenticate first:
+Accessing the restricted endpoint /admin needs that you get authenticated first:
 ```
 $ curl -v http://testuser:supersecret@localhost:3001/auth
 ```
-This will give you a Token that will last 3 minutes.
-Finally to use the token you could do:
+This will give you a JSON Web Token that will last 3 minutes.
+Finally, to use the token do:
 ```
 $ curl -H"Authorization: BEARER YOUeXtrEmlY.LongJSONWEbToken" -v http://localhost:3001/admin
 ```
