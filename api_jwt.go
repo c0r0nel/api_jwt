@@ -55,7 +55,7 @@ func router() http.Handler {
 	// Public routes
 	r.Group(func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("Welcome annonymous\n"))
+			w.Write([]byte("Welcome anonymous\n"))
 		})
 		r.Get("/auth", func(w http.ResponseWriter, r *http.Request) {
 			auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
