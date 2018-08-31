@@ -36,6 +36,6 @@ $ curl -v http://testuser:supersecret@localhost:3001/auth
 This will give you a Token that will last 3 minutes.
 Finally to use the token you could do:
 ```
-$ curl -H"Authorization: BEARER YOUeXtrEmlY.LongJSONWEbToken" -v http://testuser:supersecret@localhost:3001/admin
+$ curl -H"Authorization: BEARER YOUeXtrEmlY.LongJSONWEbToken" -v http://localhost:3001/admin
 ```
 
