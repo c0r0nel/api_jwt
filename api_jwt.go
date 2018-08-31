@@ -21,14 +21,14 @@ func init() {
 
 func main() {
 	addr := ":3001"
-	fmt.Printf("Servidor iniciado en el puerto %v\n", addr)
+	fmt.Printf("Server started at %v\n", addr)
 	http.ListenAndServe(addr, router())
 }
 
 func router() http.Handler {
 	r := chi.NewRouter()
 
-	// Rutas Protegidas
+	// Protected routes
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator)
@@ -37,7 +37,6 @@ func router() http.Handler {
 			_, claims, _ := jwtauth.FromContext(r.Context())
 
 			var exp int64
-			//uffff.. Golang y sus tipos de datos
 			if expv, ok := claims["exp"]; ok {
 				switch v := expv.(type) {
 				case float64:
@@ -49,20 +48,20 @@ func router() http.Handler {
 				default:
 				}
 			}
-			w.Write([]byte(fmt.Sprintf("Area protegida por JWT. Bienvenido: %v\nEste Token expira el: %v\n", claims["user_id"], time.Unix(exp, 0))))
+			w.Write([]byte(fmt.Sprintf("Protected area. Welcome: %v\nYour Token expires at: %v\n", claims["user_id"], time.Unix(exp, 0))))
 		})
 	})
 
-	// Rutas Publicas
+	// Public routes
 	r.Group(func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("Bienvenido Anonimo, Nada por aqui!\n"))
+			w.Write([]byte("Welcome annonymous\n"))
 		})
 		r.Get("/auth", func(w http.ResponseWriter, r *http.Request) {
 			auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
 
 			if len(auth) != 2 || auth[0] != "Basic" {
-				http.Error(w, "Falló la Autorización\n", http.StatusUnauthorized)
+				http.Error(w, "Authorization failed\n", http.StatusUnauthorized)
 				return
 			}
 
@@ -70,12 +69,12 @@ func router() http.Handler {
 			pair := strings.SplitN(string(payload), ":", 2)
 
 			if len(pair) != 2 || !validate(pair[0], pair[1]) {
-				http.Error(w, "Falló la Autorización: credenciales inválidas\n", http.StatusUnauthorized)
+				http.Error(w, "Authorization falied: invalid credentials\n", http.StatusUnauthorized)
 				return
 			} else {
-				//el JWT tendrá 180 segundos de vida
+				//The JWT will have 180secs of lifetime
 				expiration := int64(time.Now().Unix()) + 180
-				w.Write([]byte(fmt.Sprintf("Este es tu JWT para esta sesión: %v\nExpira el: %s\n\n", generate_jwt(pair[0], expiration), time.Unix(expiration, 0))))
+				w.Write([]byte(fmt.Sprintf("This is your JWT for this session: %v\nExpires at: %s\n\n", generate_jwt(pair[0], expiration), time.Unix(expiration, 0))))
 			}
 
 		})
@@ -84,23 +83,21 @@ func router() http.Handler {
 	return r
 }
 
-//Validacion de usuarios
+//Users validation
 func validate(username, password string) bool {
 	out := false
-	database, _ := sql.Open("sqlite3", "./usuarios.db")
-	err := database.QueryRow("select username, password from usuarios where username LIKE ? and password LIKE ?", username, password).Scan(&username)
+	database, _ := sql.Open("sqlite3", "./users.db")
+	err := database.QueryRow("select username, password from usuers where username LIKE ? and password LIKE ?", username, password).Scan(&username)
 	if err != nil && err == sql.ErrNoRows {
 		out = false
 	} else {
-		//el usuario existe en la DB. lo valido
 		out = true
 	}
 	return out
 }
 
-//Generacion de Jwt
+//JWT generation
 func generate_jwt(username string, expiration int64) string {
-	//el claim "exp" es un unix timestamp que especifica el momento de expiracion del JWT. La rfc 7519 sugiere usar unos  pocos minutos. Yo le puse 2
 	_, tokenString, _ := tokenAuth.Encode(jwtauth.Claims{"user_id": username, "exp": expiration})
 	fmt.Printf("DEBUG: JWT: %s\n Claim: \"user_id\": %s\n\"exp\": %s", tokenString, username, time.Unix(expiration, 0))
 	return tokenString
