@@ -70,13 +70,11 @@ func router() http.Handler {
 
 			if len(pair) != 2 || !validate(pair[0], pair[1]) {
 				http.Error(w, "Authorization falied: invalid credentials\n", http.StatusUnauthorized)
-				return
 			} else {
 				//The JWT will have 180secs of lifetime
 				expiration := int64(time.Now().Unix()) + 180
 				w.Write([]byte(fmt.Sprintf("This is your JWT for this session: %v\nExpires at: %s\n\n", generateJwt(pair[0], expiration), time.Unix(expiration, 0))))
 			}
-
 		})
 	})
 
