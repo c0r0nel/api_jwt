@@ -1,12 +1,18 @@
-FROM iron/go:dev
+FROM golang:1.11.0-alpine as build
 
-WORKDIR /app
+ARG SRC_REPO=github.com/c0r0nel/api_jwt
+ARG SRC_TAG=master
+ARG ARCH=amd64
 
-# Set an env var that matches your github repo name, replace treeder/dockergo here with your repo name
-ENV SRC_DIR=/go/src/github.com/c0r0nel/api_jwt/
-# Add the source code:
-ADD . $SRC_DIR
-# Build it:
-RUN cd $SRC_DIR; go build -o api_jwt; cp api_jwt /app/
+RUN apk update && apk add --no-cache build-base
 
-ENTRYPOINT ["./api_jwt"]
+COPY . /go/src/${SRC_REPO}
+RUN GOARCH=${ARCH} go get ${SRC_REPO}
+RUN find /go/bin -name api_jwt -type f | xargs -I@ install @ /
+
+FROM alpine:3.7
+
+USER 1001
+COPY --from=build /api_jwt /opt/api_jwt/bin/api_jwt
+
+ENTRYPOINT [ "/opt/api_jwt/bin/api_jwt" ]
