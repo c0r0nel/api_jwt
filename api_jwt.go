@@ -74,7 +74,7 @@ func router() http.Handler {
 			} else {
 				//The JWT will have 180secs of lifetime
 				expiration := int64(time.Now().Unix()) + 180
-				w.Write([]byte(fmt.Sprintf("This is your JWT for this session: %v\nExpires at: %s\n\n", generate_jwt(pair[0], expiration), time.Unix(expiration, 0))))
+				w.Write([]byte(fmt.Sprintf("This is your JWT for this session: %v\nExpires at: %s\n\n", generateJwt(pair[0], expiration), time.Unix(expiration, 0))))
 			}
 
 		})
@@ -97,7 +97,7 @@ func validate(username, password string) bool {
 }
 
 //JWT generation
-func generate_jwt(username string, expiration int64) string {
+func generateJwt(username string, expiration int64) string {
 	_, tokenString, _ := tokenAuth.Encode(jwtauth.Claims{"user_id": username, "exp": expiration})
 	fmt.Printf("DEBUG: JWT: %s\n Claim: \"user_id\": %s\n\"exp\": %s", tokenString, username, time.Unix(expiration, 0))
 	return tokenString
