@@ -1,3 +1,4 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/c0r0nel/api_jwt)](https://goreportcard.com/report/github.com/c0r0nel/api_jwt)
 
 ## API_JWT
 
