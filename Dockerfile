@@ -11,7 +11,6 @@ RUN GOARCH=${ARCH} go get ${SRC_REPO}
 RUN find /go/bin -name api_jwt -type f | xargs -I@ install @ /
 
 FROM alpine:3.7
-MAINTAINER JuanJo Ciarlante <juanjosec@gmail.com>
 
 USER 1001
 COPY --from=build /api_jwt /opt/api_jwt/bin/api_jwt
