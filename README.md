@@ -44,3 +44,16 @@ Finally, to use the token do:
 $ curl -H"Authorization: BEARER YOUeXtrEmlY.LongJSONWEbToken" -v http://localhost:3001/admin
 ```
 
+## Building a Docker image
+
+To run api_jwt as a docker container you can build the image using the Dockerfile provided.
+Build it with:
+```
+$ docker build -t c0r0nel/api_jwt .
+```
+and then just run it:
+```
+$ docker run --rm -p 3001:3001 c0r0nel/api_jwt
+```
+
+Enjoy :)
