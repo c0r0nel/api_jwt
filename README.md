@@ -10,7 +10,6 @@ This is a small API written in golang that implements JSON Web Token through sev
 - https://github.com/go-chi/jwtauth
 - https://github.com/mattn/go-sqlite3
 
-a
 ## Usage
 
 Create the sqlite3 database elsewere:
