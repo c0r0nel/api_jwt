@@ -49,11 +49,11 @@ $ curl -H"Authorization: BEARER YOUeXtrEmlY.LongJSONWEbToken" -v http://localhos
 To run api_jwt as a docker container you can build the image using the Dockerfile provided.
 Build it with:
 ```
-$ docker build -t c0r0nel/api_jwt .
+$ docker build -t api_jwt .
 ```
 and then just run it:
 ```
-$ docker run --rm -p 3001:3001 c0r0nel/api_jwt
+$ docker run --rm -p 3001:3001 api_jwt
 ```
 
 Enjoy :)
