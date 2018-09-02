@@ -10,23 +10,24 @@ This is a small API written in golang that implements JSON Web Token through sev
 - https://github.com/go-chi/jwtauth
 - https://github.com/mattn/go-sqlite3
 
-
+a
 ## Usage
 
-Create the sqlite3 database with some testing data in it.
+Create the sqlite3 database elsewere:
 ```
-$ sqlite3 users.db < users.sql
+$ sqlite3 ~/db/users.db < users.sql
 ```
 
-Before running the server first you need to get all the dependencies needed, this might take some minutes. Be patience.
+Before running the server, you need to get all the dependencies needed, this might take some minutes. Be patience.
 ```
 $ go get ./...
 ```
 
-Finally you can run the server doing:
+Finally you can build the server and run it doing:
 
 ```
-$ go run api_jwt.go
+$ go build api_jwt.go
+$ ./api_jwt -p 3001 -db=~/db/users.db
 ```
 
 For testing purpose, you can try to access the API root first:
@@ -53,7 +54,7 @@ $ docker build -t api_jwt .
 ```
 and then just run it:
 ```
-$ docker run --rm -p 3001:3001 api_jwt
-```
+docker run -v ~/db/users.db:/db --rm -p 3001:3001 c0r0nel/api_jwt -p=3001 -db=/db/users.db
+``
 
-Enjoy :)
+Enjoy!! :)

@@ -8,8 +8,9 @@ RUN apk update && apk add --no-cache build-base sqlite
 COPY . /go/src/${SRC_REPO}
 RUN GOARCH=${ARCH} go get ${SRC_REPO}
 RUN find /go/bin -name api_jwt -type f | xargs -I@ install @ /
-WORKDIR /go/src/${SRC_REPO}/
-RUN sqlite3 users.db < users.sql
+
+
+
 FROM alpine:3.7
 
 USER 1001

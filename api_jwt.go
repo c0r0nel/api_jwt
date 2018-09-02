@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/base64"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
@@ -14,15 +15,19 @@ import (
 )
 
 var tokenAuth *jwtauth.JWTAuth
+var portPtr *string
+var dbpathPtr *string
 
 func init() {
 	tokenAuth = jwtauth.New("HS256", []byte("secret"), nil)
+	portPtr = flag.String("p", "3001", "Port to listen")
+	dbpathPtr = flag.String("db", "./users.db", "path to the users sqlite database")
+	flag.Parse()
 }
 
 func main() {
-	addr := ":3001"
-	fmt.Printf("Server started at %v\n", addr)
-	http.ListenAndServe(addr, router())
+	fmt.Printf("Server started at %v\n", *portPtr)
+	http.ListenAndServe(":"+*portPtr, router())
 }
 
 func router() http.Handler {
@@ -57,6 +62,7 @@ func router() http.Handler {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Welcome anonymous\n"))
 		})
+
 		r.Get("/auth", func(w http.ResponseWriter, r *http.Request) {
 			auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
 
@@ -84,7 +90,7 @@ func router() http.Handler {
 //Users validation
 func validate(username, password string) bool {
 	var out bool
-	database, _ := sql.Open("sqlite3", "./users.db")
+	database, _ := sql.Open("sqlite3", *dbpathPtr)
 	err := database.QueryRow("select username, password from users where username LIKE ? and password LIKE ?", username, password).Scan(&username)
 	if err != nil && err == sql.ErrNoRows {
 		out = false
