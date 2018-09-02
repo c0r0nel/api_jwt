@@ -53,7 +53,7 @@ $ docker build -t api_jwt .
 ```
 and then just run it:
 ```
-docker run -v ~/db:/db --rm -p 3001:3001 c0r0nel/api_jwt -p=3001 -db=/db/users.db
+docker run -v ~/db:/db --rm -p 3001:3001 api_jwt -p=3001 -db=/db/users.db
 ```
 
 Enjoy!! :)
