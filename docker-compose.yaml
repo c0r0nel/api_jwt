@@ -36,7 +36,7 @@ services:
     command:
       - -c
       - |
-        until test -f ${DBPATH}; do echo "Waiting for DB to be created"; sleep 1;done
+        until test -f ${DBPATH}; do echo "Waiting for DB to be created"; sleep 1; done
         exec /opt/api_jwt/bin/api_jwt -p ${PORT} -db ${DBPATH}
   test:
     depends_on:
@@ -50,7 +50,7 @@ services:
       - |
         apk update
         apk add curl
-        until curl -so/dev/null http://localhost:${PORT};  do echo "Waiting for main service to be ready"; sleep 1;done
+        until curl -so/dev/null http://localhost:${PORT}; do echo "Waiting for main service to be ready"; sleep 1; done
         JWT=$$(curl -sv http://testuser:supersecret@localhost:${PORT}/auth | sed -nr '/JWT/s/.*: //p')
         echo "JWT: $$JWT"
         set -x
