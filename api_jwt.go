@@ -10,6 +10,7 @@ import (
 	"github.com/go-chi/jwtauth"
 	_ "github.com/mattn/go-sqlite3"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -20,7 +21,11 @@ var dbpathPtr *string
 
 func init() {
 	tokenAuth = jwtauth.New("HS256", []byte("secret"), nil)
-	portPtr = flag.String("p", "3001", "Port to listen")
+	defPort, ok := os.LookupEnv("DEFAULT_PORT")
+	if !ok {
+		defPort = "3001"
+	}
+	portPtr = flag.String("p", defPort, "Port to listen")
 	dbpathPtr = flag.String("db", "./users.db", "path to the users sqlite database")
 	flag.Parse()
 }
@@ -74,7 +79,7 @@ func router() http.Handler {
 			payload, _ := base64.StdEncoding.DecodeString(auth[1])
 			pair := strings.SplitN(string(payload), ":", 2)
 
-			if len(pair) != 2 || !validate(pair[0], pair[1]) {
+			if !validate(pair[0], pair[1]) {
 				http.Error(w, "Authorization falied: invalid credentials\n", http.StatusUnauthorized)
 			} else {
 				//The JWT will have 180secs of lifetime
@@ -89,13 +94,22 @@ func router() http.Handler {
 
 //Users validation
 func validate(username, password string) bool {
-	var out bool
+	//var out bool
+	out := false
 	database, _ := sql.Open("sqlite3", *dbpathPtr)
-	err := database.QueryRow("select username, password from users where username LIKE ? and password LIKE ?", username, password).Scan(&username)
-	if err != nil && err == sql.ErrNoRows {
+	query := "select  username, password from users where username LIKE '" + username + "' and password LIKE '" + password + "';"
+	rows, err := database.Query(query)
+	if err != nil {
 		out = false
 	} else {
-		out = true
+		for rows.Next() {
+			err2 := rows.Scan(&username, &password)
+			if err2 != nil {
+				out = false
+			} else {
+				out = true
+			}
+		}
 	}
 	return out
 }
