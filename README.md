@@ -56,4 +56,11 @@ and then just run it:
 docker run -v ~/db:/db --rm -p 3001:3001 api_jwt -p=3001 -db=/db/users.db
 ```
 
+## Docker compose
+
+Once you have built the image you can run the project doing a:
+```
+docker compose up -d
+```
+
 Enjoy!! :)
